@@ -7,34 +7,9 @@ import json
 from pprint import pprint
 from multiprocessing import Pool
 import tqdm
+import argparse
 
 lead_order = ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"]
-
-def raw_ecg_to_formatted(raw_ecg, format_str, num_pages, page_cols):
-    # TODO: verify this a lot
-    out = {}
-    for page_no in range(num_pages):
-        leads_per_page = 12 // num_pages
-        page_range_start = page_no * leads_per_page
-        page_range_end = page_range_start + leads_per_page
-        for col_no in range(page_cols):
-            leads_per_col = leads_per_page // page_cols
-            samples_per_col = raw_ecg.shape[0] // page_cols
-            range_start = page_range_start + col_no * leads_per_col
-            range_end = range_start + leads_per_col
-            time_start = samples_per_col * col_no
-            time_end = time_start + samples_per_col
-
-            for lead_no in range(range_start, range_end):
-                out[lead_order[lead_no]] = raw_ecg[time_start:time_end, lead_no]
-
-    if "+1R" in format_str:
-        out["rhythm1"] = raw_ecg[:,1]
-    if "+3R" in format_str:
-        out["rhythm1"] = raw_ecg[:,1]
-        out["rhythm2"] = raw_ecg[:,6]
-        out["rhythm3"] = raw_ecg[:,10]
-    return out
 
 def process_ecg(package):
     try:
@@ -77,17 +52,20 @@ def process_ecg(package):
 
  
 if __name__ == '__main__':
-    base_dir = Path(sys.argv[1])
-    data_dir = base_dir / "data"
-    meta_df = pd.read_csv(base_dir / "metadata.csv")
+    parser = argparse.ArgumentParser(description='Calculate the normalized pixel distance score for ECGs')
+    parser.add_argument('base_dir', help='Path to the base directory containing data and metadata', type=Path)
+    parser.add_argument('digi_ecg_dir', help='Path to the digitized ECG directory', type=Path)
+    parser.add_argument('output_csv', help='Path to the output CSV file', type=Path)
+    args = parser.parse_args()
+
+    data_dir = args.base_dir / "data"
+    meta_df = pd.read_csv(args.base_dir / "metadata.csv")
     filtered_meta = meta_df[meta_df["Image page"] == 0]
-
-
-    digi_base_dir = Path(sys.argv[2])
+    digi_base_dir = args.digi_ecg_dir
 
     with Pool(12) as p:
         out = list(tqdm.tqdm(p.imap_unordered(process_ecg, filtered_meta.iterrows(), chunksize=1), total=len(filtered_meta), smoothing=0.05))
 
     df = pd.json_normalize(out)
-    df.to_csv(sys.argv[3])
+    df.to_csv(args.output_csv)
 
