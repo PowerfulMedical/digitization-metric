@@ -9,6 +9,7 @@ from multiprocessing import Pool
 import tqdm
 import argparse
 
+# The lead_order list represents the standard sequence of leads in a 12-lead ECG
 lead_order = ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"]
 
 
