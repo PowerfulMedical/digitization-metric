@@ -81,7 +81,7 @@ def process_ecg(row: pd.Series) -> t.Dict[str, t.Union[str, float]]:
 if __name__ == "__main__":
     # Initialize argument parser
     parser = argparse.ArgumentParser(description="Calculate the normalized pixel distance score for ECGs")
-    parser.add_argument('base_dir', help='Path to the base directory containing data and metadata', type=Path)
+    parser.add_argument("base_dir", help="Path to the base directory containing data and metadata", type=Path)
     parser.add_argument("digi_ecg_dir", help="Path to the digitized ECG directory", type=Path)
     parser.add_argument("output_csv", help="Path to the output CSV file", type=Path)
     args = parser.parse_args()

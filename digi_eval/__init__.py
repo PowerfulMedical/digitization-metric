@@ -111,9 +111,9 @@ def draw_leads(
 
 def compare_leads(
     ecg: np.ndarray,
-    gold: np.ndarray,
+    target: np.ndarray,
     ecg_fs: int = 500,
-    gold_fs: int = 500,
+    target_fs: int = 500,
     max_shift_x: int = 200,
     max_shift_y: int = 300,
 ) -> float:
@@ -121,9 +121,9 @@ def compare_leads(
     Compare two ECG leads and return a similarity score.
 
     :param ecg: ECG lead array.
-    :param gold: Gold standard ECG lead array.
+    :param target: target standard ECG lead array.
     :param ecg_fs: ECG lead sampling frequency.
-    :param gold_fs: Gold standard ECG lead sampling frequency.
+    :param target_fs: target standard ECG lead sampling frequency.
     :param max_shift_x: Maximum tested shift on x axis.
     :param max_shift_y: Maximum tested shift on y axis.
     :return: Similarity score.
@@ -134,16 +134,16 @@ def compare_leads(
         ecg[len(ecg) // 2] = 0
 
     # Draw ECG lead images for comparison
-    ecg_img, gold_img = draw_leads(
-        [{"lead": ecg, "lead_sampling_freq": ecg_fs}, {"lead": gold, "lead_sampling_freq": gold_fs}]
+    ecg_img, target_img = draw_leads(
+        [{"lead": ecg, "lead_sampling_freq": ecg_fs}, {"lead": target, "lead_sampling_freq": target_fs}]
     )
     # Calculate distance matrices for the ECG images
     ecg_dist = make_distance_matrix(ecg_img)
-    gold_dist = make_distance_matrix(gold_img)
+    target_dist = make_distance_matrix(target_img)
 
     # Find non-zero (i.e., drawn) points in the ECG images
     non_zero_ecg = np.nonzero(ecg_img)
-    non_zero_gold = np.nonzero(gold_img)
+    non_zero_target = np.nonzero(target_img)
 
     # Initialize shift matrices for comparing ECG images
     shift_mat = np.zeros((max_shift_y * 2 + 1, max_shift_x * 2 + 1), dtype=np.float64)
@@ -151,14 +151,14 @@ def compare_leads(
 
     # Update shift matrices with distances between ECG image points
     for i in range(len(non_zero_ecg[0])):
-        shift_mat += gold_dist[
+        shift_mat += target_dist[
             non_zero_ecg[0][i] - max_shift_y : non_zero_ecg[0][i] + 1 + max_shift_y,
             non_zero_ecg[1][i] - max_shift_x : non_zero_ecg[1][i] + 1 + max_shift_x,
         ]
-    for i in range(len(non_zero_gold[0])):
+    for i in range(len(non_zero_target[0])):
         shift_mat_back += ecg_dist[
-            non_zero_gold[0][i] - max_shift_y : non_zero_gold[0][i] + 1 + max_shift_y,
-            non_zero_gold[1][i] - max_shift_x : non_zero_gold[1][i] + 1 + max_shift_x,
+            non_zero_target[0][i] - max_shift_y : non_zero_target[0][i] + 1 + max_shift_y,
+            non_zero_target[1][i] - max_shift_x : non_zero_target[1][i] + 1 + max_shift_x,
         ]
 
     # Combine the shift matrices and calculate the similarity score
@@ -181,23 +181,23 @@ def make_distance_matrix(img: np.ndarray) -> np.ndarray:
     return np.maximum(edt - 1, 0)
 
 
-def compare_ecgs(ecg: dict, gold: dict, ecg_fs: int = 500, gold_fs: int = 500) -> float:
+def compare_ecgs(ecg: dict, target: dict, ecg_fs: int = 500, target_fs: int = 500) -> float:
     """
     Compare two sets of ECG leads and return a total error score.
 
     :param ecg: Dictionary of ECG leads.
-    :param gold: Dictionary of gold standard ECG leads.
+    :param target: Dictionary of target standard ECG leads.
     :param ecg_fs: ECG lead sampling frequency.
-    :param gold_fs: Gold standard ECG lead sampling frequency.
+    :param target_fs: target standard ECG lead sampling frequency.
     :return: Total error score.
     """
     # Initialize the total error score
     total_err = 0
 
-    # Iterate through each lead in the gold standard set
-    for k in gold:
-        # Calculate the error score between the input and gold standard leads
-        lead_err = compare_leads(ecg[k], gold[k], ecg_fs, gold_fs)
+    # Iterate through each lead in the target standard set
+    for k in target:
+        # Calculate the error score between the input and target standard leads
+        lead_err = compare_leads(ecg[k], target[k], ecg_fs, target_fs)
         # Accumulate the lead error scores
         total_err += lead_err
     return total_err
