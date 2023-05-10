@@ -46,9 +46,9 @@ base_dir/
   metadata.csv
 ```
 
-Data folder contains original EGGs.
-Format is as follows. In `leads.npz` there is an dictionary keyed by ECG ID (from metadata) and each value is an 12 lead ECG sampled with 500 Hz frequency (first dimension is time, second are leads).
-If there are rhythms leads present, they can be found in `rhythms.npz` under corresponding ECG ID.
+The data folder contains original EGGs.
+The format is as follows. In `leads.npz`, there is a dictionary keyed by ECG ID (from metadata), and each value is a 12 lead ECG sampled with 500 Hz frequency (first dimension is time, second are leads).
+If there are rhythm leads present, they can be found in `rhythms.npz` under the corresponding ECG ID.
 
 ### Digitized Data Folder:
 
