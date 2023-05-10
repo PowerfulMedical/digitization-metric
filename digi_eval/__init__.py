@@ -18,9 +18,7 @@ def bool_array_to_regions(arr: np.ndarray) -> t.List[slice]:
     # Find the start positions of contiguous True regions
     begs = ([0] if arr[0] else []) + ((~arr[:-1] & arr[1:]).nonzero()[0] + 1).tolist()
     # Find the end positions of contiguous True regions
-    ends = ((arr[:-1] & ~arr[1:]).nonzero()[0] + 1).tolist() + (
-        [len(arr)] if arr[-1] else []
-    )
+    ends = ((arr[:-1] & ~arr[1:]).nonzero()[0] + 1).tolist() + ([len(arr)] if arr[-1] else [])
 
     # Create slices for each contiguous True region using the start and end positions
     return [slice(beg, end) for beg, end in zip(begs, ends)]
@@ -29,9 +27,9 @@ def bool_array_to_regions(arr: np.ndarray) -> t.List[slice]:
 def lead_to_coords(
     lead: np.ndarray,
     lead_sampling_freq: int,
-    square_size: int = 64,
-    draw_speed: int = 25,
-    draw_voltage: int = 10,
+    square_size: int,
+    draw_speed: int,
+    draw_voltage: int,
 ) -> tuple:
     """
     Convert a lead array into x and y coordinates for drawing.
@@ -62,7 +60,7 @@ def lead_to_coords(
 
 def draw_leads(
     leads: list,
-    square_size: int = 64,
+    square_size: int = 50,
     draw_speed: int = 25,
     draw_voltage: int = 10,
     pad_left_right: int = 256,
@@ -108,10 +106,7 @@ def draw_leads(
         # Find regions where y coordinates are not NaN
         nan_regions = bool_array_to_regions(~np.isnan(y).reshape((-1, 1)))
         # Create a list of lines for each region
-        all_lines = [
-            np.vstack([x[r] + pad_left_right, y[r]]).T.astype(np.int32)
-            for r in nan_regions
-        ]
+        all_lines = [np.vstack([x[r] + pad_left_right, y[r]]).T.astype(np.int32) for r in nan_regions]
 
         # Set the color and thickness of the lines to be drawn
         color = [1]
@@ -125,7 +120,12 @@ def draw_leads(
 
 
 def compare_leads(
-    ecg: np.ndarray, gold: np.ndarray, ecg_fs: int = 500, gold_fs: int = 500
+    ecg: np.ndarray,
+    gold: np.ndarray,
+    ecg_fs: int = 500,
+    gold_fs: int = 500,
+    max_shift_x: int = 200,
+    max_shift_y: int = 300,
 ) -> float:
     """
     Compare two ECG leads and return a similarity score.
@@ -134,6 +134,8 @@ def compare_leads(
     :param gold: Gold standard ECG lead array.
     :param ecg_fs: ECG lead sampling frequency.
     :param gold_fs: Gold standard ECG lead sampling frequency.
+    :param max_shift_x: Maximum tested shift on x axis.
+    :param max_shift_y: Maximum tested shift on y axis.
     :return: Similarity score.
     """
     # Check if the entire ECG lead is missing (all NaN values)
@@ -157,12 +159,8 @@ def compare_leads(
     non_zero_gold = np.nonzero(gold_img)
 
     # Initialize shift matrices for comparing ECG images
-    max_shift_x = 200
-    max_shift_y = 300
     shift_mat = np.zeros((max_shift_y * 2 + 1, max_shift_x * 2 + 1), dtype=np.float64)
-    shift_mat_back = np.zeros(
-        (max_shift_y * 2 + 1, max_shift_x * 2 + 1), dtype=np.float64
-    )
+    shift_mat_back = np.zeros((max_shift_y * 2 + 1, max_shift_x * 2 + 1), dtype=np.float64)
 
     # Update shift matrices with distances between ECG image points
     for i in range(len(non_zero_ecg[0])):
