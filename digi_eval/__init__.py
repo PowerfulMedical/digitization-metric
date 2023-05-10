@@ -30,7 +30,7 @@ def lead_to_coords(
     square_size: int,
     draw_speed: int,
     draw_voltage: int,
-) -> tuple:
+) -> t.Tuple[int, int]:
     """
     Convert a lead array into x and y coordinates for drawing.
 
@@ -80,13 +80,7 @@ def draw_leads(
 
     # Convert leads to coordinates using lead_to_coords function
     lead_coords = [
-        lead_to_coords(
-            lead["lead"],
-            lead["lead_sampling_freq"],
-            square_size,
-            draw_speed,
-            draw_voltage,
-        )
+        lead_to_coords(lead["lead"], lead["lead_sampling_freq"], square_size, draw_speed, draw_voltage)
         for lead in leads
     ]
 
@@ -108,12 +102,8 @@ def draw_leads(
         # Create a list of lines for each region
         all_lines = [np.vstack([x[r] + pad_left_right, y[r]]).T.astype(np.int32) for r in nan_regions]
 
-        # Set the color and thickness of the lines to be drawn
-        color = [1]
-        thickness = 1
-
         # Draw the lines on the image using cv2.polylines
-        cv2.polylines(image, all_lines, False, color, thickness=thickness)
+        cv2.polylines(image, all_lines, False, 1)
         out.append(image.astype(np.int64))
 
     return out
@@ -145,10 +135,7 @@ def compare_leads(
 
     # Draw ECG lead images for comparison
     ecg_img, gold_img = draw_leads(
-        [
-            {"lead": ecg, "lead_sampling_freq": ecg_fs},
-            {"lead": gold, "lead_sampling_freq": gold_fs},
-        ]
+        [{"lead": ecg, "lead_sampling_freq": ecg_fs}, {"lead": gold, "lead_sampling_freq": gold_fs}]
     )
     # Calculate distance matrices for the ECG images
     ecg_dist = make_distance_matrix(ecg_img)

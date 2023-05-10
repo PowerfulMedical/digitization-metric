@@ -20,7 +20,7 @@ def process_ecg(row: pd.Series) -> t.Dict[str, t.Union[str, float]]:
 
     This function calculates the error scores and normalized score between the
     input ECG and target standard ECG. The error scores are calculated using the
-    compare_ecgs function. The normalized score is calculated as (1 - digi_res / flat_res).
+    compare_ecgs function. The normalized score is calculated as max(0, 1 - digi_res / flat_res).
 
     :param row: One row from metadata file
     :return: Dictionary containing the path, flat_distance, ecg_distance, and normalized_score
@@ -81,11 +81,7 @@ def process_ecg(row: pd.Series) -> t.Dict[str, t.Union[str, float]]:
 if __name__ == "__main__":
     # Initialize argument parser
     parser = argparse.ArgumentParser(description="Calculate the normalized pixel distance score for ECGs")
-    parser.add_argument(
-        "base_dir",
-        help="Path to the base directory containing data and metadata",
-        type=Path,
-    )
+    parser.add_argument('base_dir', help='Path to the base directory containing data and metadata', type=Path)
     parser.add_argument("digi_ecg_dir", help="Path to the digitized ECG directory", type=Path)
     parser.add_argument("output_csv", help="Path to the output CSV file", type=Path)
     args = parser.parse_args()
