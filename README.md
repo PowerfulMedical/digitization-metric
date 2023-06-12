@@ -2,8 +2,7 @@
 This evaluation tool is designed as a supplemental material to the paper titled 
 "_PMcardio ECG Image Database (PM-ECG-ID): A Diverse ECG Database for Evaluating Digitization Solutions_" by Viera Kresnakova MSc,
 Robert Herman MD, Andrej Iring MSc, Vladimir Boza MSc, PhD, Michal Hojcka MSc, PhD, Simon Rovder MInf,
-Timotej Palus MSc, Anthony Demolder MD, PhD, Robert Hatala MD, PhD, Martin Herman, Felix Bauer BSc, Viktor Jurasek,
-Boris Vavrik MSc.
+Timotej Palus MSc, Anthony Demolder MD, PhD, Robert Hatala MD, PhD, Martin Herman, Felix Bauer BSc, Viktor Jurasek and Boris Vavrik MSc.
 
 
 The tool evaluates the performance of digitized ECG data by comparing it to a 
