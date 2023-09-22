@@ -93,3 +93,8 @@ Summarize the scores and print the results:
 `python summarize.py <output_csv>`
 
 This will generate a summary of the normalized pixel distance scores by dataset and the total average score.
+
+## ECG Visualization
+
+Contained within `visualization.py`, the `visualize` function provides a seamless method for visualizing ECG data from a `numpy` 
+array. It creates a grid structure resembling the standard ECG format and plots the signals for each lead.
