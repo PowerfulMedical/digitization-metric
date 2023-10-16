@@ -2,11 +2,12 @@
 This evaluation tool is designed as a supplemental material to the paper titled 
 "_PMcardio ECG Image Database (PM-ECG-ID): A Diverse ECG Database for Evaluating Digitization Solutions_" by Viera Kresnakova MSc,
 Robert Herman MD, Andrej Iring MSc, Vladimir Boza MSc, PhD, Michal Hojcka MSc, PhD, Simon Rovder MInf,
-Timotej Palus MSc, Anthony Demolder MD, PhD, Robert Hatala MD, PhD, Martin Herman, Felix Bauer BSc, Viktor Jurasek and Boris Vavrik MSc.
+Timotej Palus MSc, Anthony Demolder MD, PhD, Martin Herman, Felix Bauer BSc, Viktor Jurasek, Robert Hatala MD, PhD, 
+Jozef Bartunek MD, PhD and Boris Vavrik MSc.
 
 
 The tool evaluates the performance of digitized ECG data by comparing it to a 
-gold standard ECG dataset. It calculates the normalized pixel distance scores for each 
+gold standard ECG dataset. It calculates the Digitized signal similarity metric for each 
 ECG and provides summary statistics to support the findings presented in the paper.
 
 ## Objective
@@ -16,14 +17,14 @@ understand the effectiveness of the digitization methods discussed in the paper 
 or apply the methods to their own datasets.
 
 ## Methodology
-The evaluation tool calculates the normalized pixel distance scores for each ECG by comparing the digitized ECG data to
+The evaluation tool calculates the Digitized signal similarity metric for each ECG by comparing the digitized ECG data to
 the gold standard dataset. The comparison is performed using the `compare_ecgs` function, which calculates error scores 
-between the two ECGs. The normalized score is then calculated as `max(0, 1 - digi_res / flat_res)`, where `digi_res` is 
+between the two signals. The normalized score is then calculated as `max(0, 1 - digi_res / flat_res)`, where `digi_res` is 
 the error for the digitized ECG, and `flat_res` is the error for a flat (zero-valued) ECG. 
-Lower normalized scores indicate better performance in terms of digitization accuracy.
+The higher value of the metric indicates better performance in terms of digitization accuracy.
 
 ## Results Interpretation
-The summary statistics provided by the evaluation tool include the average normalized pixel distance scores for 
+The summary statistics provided by the evaluation tool include the average Digitized signal similarity metric for 
 each dataset and the total average score. These results can be used to compare different digitization methods, 
 assess the impact of input quality, or support the conclusions drawn in the paper.
 
@@ -84,7 +85,7 @@ Rhythm leads (if present) are marked as "rhythm1", "rhythm2", "rhythm3".
 Example of such output is in `example_digitization` folder.
 
 ## Running evaluation
-Calculate the normalized pixel distance scores for each ECG:
+Calculate the nDigitized signal similarity for each ECG:
 
 `python calc.py <dataset_folder> <digitized_folder> <output_csv>`
 
@@ -92,7 +93,7 @@ Summarize the scores and print the results:
 
 `python summarize.py <output_csv>`
 
-This will generate a summary of the normalized pixel distance scores by dataset and the total average score.
+This will generate a summary of the Digitized signal similarity metric by dataset and the total average score.
 
 ## ECG Visualization
 
