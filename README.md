@@ -85,7 +85,7 @@ Rhythm leads (if present) are marked as "rhythm1", "rhythm2", "rhythm3".
 Example of such output is in `example_digitization` folder.
 
 ## Running evaluation
-Calculate the nDigitized signal similarity for each ECG:
+Calculate the Digitized signal similarity for each ECG:
 
 `python calc.py <dataset_folder> <digitized_folder> <output_csv>`
 
